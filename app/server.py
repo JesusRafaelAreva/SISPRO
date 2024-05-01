@@ -7,7 +7,7 @@ import MySQLdb.cursors, re, hashlib
 import os
 from flask import flash
 
-app = Flask("__main__", template_folder="templates")
+app = Flask("__main__", template_folder="templates")M
 app.secret_key = '_5#y2L"F4Q8z\n\xec]/'
 
 # Enter your database connection details below
