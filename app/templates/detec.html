@@ -16,7 +16,7 @@
 	</head>
 	<body>
 		<div class="login">
-			<h1>SISPRE</h1>
+			<h1>SERPEP</h1>
 			<div class="links">
 				<a href="{{ url_for('login') }}" class="active">Iniciar Sesion</a>
 				<a href="{{ url_for('register') }}">Registro</a>
@@ -30,6 +30,8 @@
 					<i class="fas fa-lock"></i>
 				</label>
 				<input type="password" name="password" placeholder="Contraseña" id="password" required>
+				<img id="captcha_img" src="b3277a594c6a77c085f5923843785f9e" alt="Captcha">
+				<input type="text" name="captcha" placeholder="Introduce el Captcha" id="captcha" required>
 				<div class="msg">{{ msg }}</div>
 				<input type="submit" value="Login">
 			</form>

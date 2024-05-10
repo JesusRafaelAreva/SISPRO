@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Record</title>
+    <style>
+        form {
+            margin: 20px auto;
+            width: 50%;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>        
+</head>
+<body>
+    <h1>Update Record</h1>
+    <form action="{{ url_for('update_record', id=record.id) }}" method="POST">
+        <label for="hclinica">Hospital Clinico:</label><br>
+        <input type="text" id="hclinica" name="hclinica" value="{{ record.hclinica }}"><br>
+        <label for="dni">DNI:</label><br>
+        <input type="text" id="dni" name="dni" value="{{ record.dni }}"><br>
+        <label for="username">Nombre:</label><br>
+        <input type="text" id="username" name="username" value="{{ record.nombre }}"><br>
+        <label for="diagnostico">Diagnostico:</label><br>
+        <input type="text" id="diagnostico" name="diagnostico" value="{{ record.diagnostico }}"><br>
+        <label for="efectividad">Efectividad:</label><br>
+        <input type="text" id="efectividad" name="efectividad" value="{{ record.efectividad }}"><br><br>
+        <input type="submit" value="Actualizar">
+    </form>
+</body>
+</html>

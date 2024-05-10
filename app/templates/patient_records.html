@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record de Pacientes</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #ddd;
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Record de Pacientes</h1>
+    <table>
+        <tr>
+            <th>Hospital Clinico</th>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Diagnostico</th>
+            <th>Efectividad</th>
+            <th>Acciones</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.hclinica }}</td>
+            <td>{{ record.dni }}</td>
+            <td>{{ record.nombre }}</td>
+            <td>{{ record.diagnostico }}</td>
+            <td>{{ record.efectividad }}</td>
+            <td>
+                <a href="{{ url_for('update_record', id=record.id) }}">Editar</a>
+                <a href="{{ url_for('delete_record', id=record.id) }}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
