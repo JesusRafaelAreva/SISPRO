@@ -11,6 +11,8 @@
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/evil-icons@1.9.0/assets/evil-icons.min.css'>
     <link rel="stylesheet" href="static/CSS/style.css">
     <link rel="stylesheet" href="static/CSS/style3.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+
     
     <!-- UPLOAD -->
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"> -->
@@ -23,16 +25,132 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.5/css/swiper.min.css'>
     <link rel="stylesheet" href="static/CSS/style2.css">
+    <style>
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            /* Asegurar que esté por encima del resto del contenido */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
 
+        /* Estilos para el contenido del modal */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
 
+        /* Estilos para el botón de cerrar */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
 
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
+        /* Estilos para el formulario dentro del modal */
+        #registrationForm label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #registrationForm input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #registrationForm input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #registrationForm button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #registrationForm button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para el card */
+        .card {
+            position: relative;
+            /* Asegurar que el card tenga un contexto de posicionamiento */
+            z-index: 1;
+            /* Asegurar que el card esté detrás del modal */
+        }
+
+        /* Estilo para el cuadro de diálogo */
+        .dialog-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dialog-box h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #007bff;
+        }
+
+        .dialog-box p {
+            margin-bottom: 10px;
+        }
+
+        .dialog-box button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .dialog-box button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body class="loggedin">
     <nav class="navtop">
         <div>
-            <h1>SISPRE</h1>
+            <h1>SERPEP</h1>
             <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Analizar Radriografia</a>
             <a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Profile</a>
             <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
@@ -49,14 +167,24 @@
     <div class="wrapper">
         <div class="card1">
             <div class="side front">
-                 <h1> BIENVENIDOS! </h1>
-                <img src="static/IMAGES/ucv.png">
-                <h3>Interfaz De Deteccion De Enfermedades Pulmonares Usando Radiografias De Torax</h3>
+                <img src="static/IMAGES/hospital2.png" >
+                 <h1> BIENVENIDOS A SERPEP! </h1>
+                <h3>SISTEMA DE RECONOCIMIENTO DE PATRONES MEDIANTE RADIOGRAFÍAS DE TÓRAX PARA DIAGNOSTICAR ENFERMEDADES PULMONARES</h3>
             </div>
             <div class="side back JUGAAD">
                 <div class="blog-slider">
                     <div class="blog-slider__wrp swiper-wrapper">
-
+                        <div class="blog-slider__item swiper-slide">
+                            <div class="blog-slider__img">
+                                <img src="static/IMAGES/freddy.jpeg" alt="dhruti">
+                            </div>
+                            <div class="blog-slider__content">
+                                <span class="blog-slider__code">Asesor de Desarrollo</span>
+                                <div class="blog-slider__title">Fredy Armando Rivera Montero</div>
+                                <div class="blog-slider__text">friveramon@hospitalsullana.gob.pe.</div>
+                               
+                            </div>
+                        </div>
                         <div class="blog-slider__item swiper-slide">
                             <div class="blog-slider__img">
                                 <img src="static/IMAGES/jesus.jpeg" alt="">
@@ -95,8 +223,8 @@
                         <header>
                             <p>
                                 <i class="fa fa-cloud-upload" aria-hidden="true"></i>
-                                <span class="up">Cargar</span>
-                                <span class="load">Archivos</span>
+                                <span class="up">Analizar</span>
+                                <span class="load">Radiografias</span>
                             </p>
                         </header>
                         <div class="body" id="drop">
@@ -113,22 +241,45 @@
                                 <!--   template   -->
                             </div>
                             <div class="op"><span class="output1"></span><h4 class="output"></h4></div>
-                            <br></br>
-                            <br></br>
-
+                            <br>
                             <div class="op2"><span class="output22"></span><h4 class="output22"></h4></div>
                             <a href="#"><button class="importar">COMENZAR DETECCION</button></a>
                             <a href="#"><button class="clear">LIMPIAR RESULTADO</button></a>
+                           
                         </footer>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Modal de Registro -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registro de Paciente</h2>
+            <form id="registrationForm" action="{{ url_for('patiente') }}" method="post" autocomplete="off">
+                <label for="hclinica">Historia Clinica:</label>
+                <input type="number" id="hclinica" name="hclinica" required><br><br>
+                <label for="dni">DNI:</label>
+                <input type="text" id="dni" name="dni" required><br><br>
+                <label for="username">Nombre del Paciente:</label>
+                <input type="text" id="username" name="username" required><br><br>
+                <label for="output">Diagnostico:</label>
+                <input type="text" id="output" name="output" required readonly><br><br>
+                <label for="output22">Efectividad:</label>
+                <input type="text" id="output22" name="output22" required readonly><br><br>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+    </div>
+    <div class="dialog-box">
+        <h3>Datos registrados correctamente</h3>
+        <button onclick="this.parentNode.style.display = 'none';">Aceptar</button>
+    </div>
 
     <div class="shameless-plug">
-        <p>&#169; Todos los derechos Reservados| UCV - 2024</p>
-         <a href="https://www.ucv.edu.pe/" target="_blank">
+        <p>&#169; Todos los derechos Reservados| Hospital de Apoyo II - Sullana - 2024 - (Panel)</p>
+         <a href="/patient_records" target="_blank">
             <div class="icon" data-icon="ei-link" data-size="s"></div>
         </a> 
     </div>
@@ -144,7 +295,48 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.5/js/swiper.min.js'></script>
     <script src="static/JS/script2.js"></script>
+    <script>
+        var modal = document.getElementById("myModal");
+        var btn = document.querySelector(".importar");
+        var span = document.getElementsByClassName("close")[0];
 
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        // Función para enviar la imagen al servidor y obtener el diagnóstico
+        function obtenerDiagnostico() {
+            var formData = new FormData();
+            var fileInput = document.getElementById('myimage');
+            formData.append('myfile', fileInput.files[0]);
+
+            fetch('/getFile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(diagnostico => {
+                // Actualizar la casilla de diagnóstico con el resultado recibido
+                document.getElementById('output').value = diagnostico;
+            })
+            .catch(error => {
+                console.error('Error al obtener el diagnóstico:', error);
+            });
+        }
+
+        // Evento clic para el botón "COMENZAR DETECCION"
+        document.querySelector('.importar').addEventListener('click', obtenerDiagnostico);
+
+    </script>
 
 </body>
 
