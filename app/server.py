@@ -1,20 +1,20 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for, session
+from flask import Flask, render_template, request, send_file, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
-import prediction
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
-import MySQLdb.cursors, re, hashlib
 import os
-from flask import flash
+import re
+import hashlib
+import prediction
 
-app = Flask("__main__", template_folder="templates")M
+app = Flask("__main__", template_folder="templates")
 app.secret_key = '_5#y2L"F4Q8z\n\xec]/'
 
 # Enter your database connection details below
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'sispre'
+app.config['MYSQL_DB'] = 'serpre'
 
 # Intialize MySQL
 mysql = MySQL(app)
@@ -25,32 +25,36 @@ app.config['Uploaded_images'] = Uploaded_images
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    # Output a message if something goes wrong...
+    # Mensaje de salida en caso de error
     msg = ''
-    # Check if "username" and "password" POST requests exist (user submitted form)
+    
+    # Verificar si se envió el formulario
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
+        # Obtener usuario y contraseña ingresados
         username = request.form['username']
         password = request.form['password']
-        # Check if account exists using MySQL
+        
+        # Verificar si las credenciales son las especificadas
+        if username == 'Rafa' and password == 'julia0302':
+            # Redirigir al usuario directamente a home.html
+            session['loggedin'] = True
+            session['username'] = username
+            return redirect(url_for('home'))
+        
+        # Verificar si el usuario y contraseña coinciden con la base de datos
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password,))
-        # Fetch one record and return result
         account = cursor.fetchone()
-        # If account exists in accounts table in out database
+        
         if account:
-            # Create session data, we can access this data in other routes
             session['loggedin'] = True
             session['id'] = account['id']
             session['username'] = account['username']
-            # Redirect to home page
             return redirect(url_for('home'))
         else:
-            # Account doesnt exist or username/password incorrect
             msg = 'Incorrect username/password!'
-    # Show the login form with message (if any)
+    
     return render_template('detec.html', msg=msg)
-
 
 @app.route('/logout/')
 def logout():
@@ -103,6 +107,114 @@ def register():
     # Show registration form with message (if any)
     return render_template('register.html', msg=msg)
 
+@app.route('/patiente', methods=['GET', 'POST'])
+def patiente():
+    msg = ''  # Mensaje de salida si algo sale mal...
+
+    if request.method == 'POST':
+        hclinica = request.form['hclinica']
+        dni = request.form['dni']
+        username = request.form['username']
+        diagnostico = request.form['output']
+        efectividad = request.form['output22']
+       
+        # Validar los datos del formulario
+        if not hclinica or not dni or not username:
+            msg = 'Por favor, complete todos los campos.'
+        else:
+            try:
+                def getOutput():
+                    output = ""
+                    myimage = request.files.get('myfile')
+                    if myimage:
+                        imgname = secure_filename(myimage.filename)
+                        imgpath = os.path.join(app.config["Uploaded_images"], imgname)
+                        myimage.save(imgpath)
+                        output = prediction.prediction(imgpath)
+                        print(output)
+                    return output
+
+                output = getOutput()
+
+                cursor = mysql.connection.cursor()
+                # Utilizar una consulta parametrizada para evitar la inyección SQL
+                cursor.execute('INSERT INTO patient_records (hclinica, dni, nombre, diagnostico, efectividad) VALUES (%s, %s, %s, %s, %s)', (hclinica, dni, username, diagnostico, efectividad))
+                mysql.connection.commit()
+                msg = '¡Registro exitoso!'
+                
+                # Redirigir a la página de inicio después de un registro exitoso
+                return redirect(url_for('home'))
+                
+            except Exception as e:
+                # Manejar cualquier error que pueda ocurrir durante la inserción
+                msg = f'Ocurrió un error durante el registro: {str(e)}'
+                return render_template('home.html', msg=msg)  # Mostrar el mensaje de error y no continuar
+
+    # Mostrar el formulario de registro con el mensaje (si lo hay)
+    return render_template('home.html', msg=msg)
+
+@app.route('/patient_records')
+def patient_records():
+    if 'loggedin' in session:
+        try:
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute('SELECT * FROM patient_records')
+            records = cursor.fetchall()
+            return render_template('patient_records.html', records=records)
+        except Exception as e:
+            msg = f'Error fetching records: {str(e)}'
+            flash(msg, 'error')
+            return redirect(url_for('home'))
+    else:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('login'))
+
+@app.route('/delete_record/<int:id>')
+def delete_record(id):
+    if 'loggedin' in session:
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute('DELETE FROM patient_records WHERE id = %s', (id,))
+            mysql.connection.commit()
+            flash('Record deleted successfully.', 'success')
+        except Exception as e:
+            flash(f'Error deleting record: {str(e)}', 'error')
+        return redirect(url_for('patient_records'))
+    else:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('login'))
+
+@app.route('/update_record/<int:id>', methods=['GET', 'POST'])
+def update_record(id):
+    if 'loggedin' in session:
+        if request.method == 'POST':
+            hclinica = request.form['hclinica']
+            dni = request.form['dni']
+            username = request.form['username']
+            diagnostico = request.form['diagnostico']
+            efectividad = request.form['efectividad']
+            try:
+                cursor = mysql.connection.cursor()
+                cursor.execute('UPDATE patient_records SET hclinica=%s, dni=%s, nombre=%s, diagnostico=%s, efectividad=%s WHERE id=%s',
+                               (hclinica, dni, username, diagnostico, efectividad, id))
+                mysql.connection.commit()
+                flash('Record updated successfully.', 'success')
+                return redirect(url_for('patient_records'))
+            except Exception as e:
+                flash(f'Error updating record: {str(e)}', 'error')
+        else:
+            try:
+                cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                cursor.execute('SELECT * FROM patient_records WHERE id = %s', (id,))
+                record = cursor.fetchone()
+                return render_template('update_record.html', record=record)
+            except Exception as e:
+                flash(f'Error fetching record: {str(e)}', 'error')
+                return redirect(url_for('patient_records'))
+    else:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('login'))
+
 @app.route('/home')
 def home():
     # Verifica si el usuario está logeado
@@ -138,6 +250,5 @@ def getOutput():
         output = prediction.prediction(imgpath)
         print(output)
     return output
-
 if __name__ == '__main__':
     app.run(port=3000)
